@@ -90,12 +90,13 @@ int redirect (int new_fd, int old_fd, int mode) {
    int saved_fd;
 
    setbuf(stdout, NULL);
-   saved_fd = dup(old_fd);
+   if (mode == 0)
+      saved_fd = dup(old_fd);
    dup2 (new_fd, old_fd);
    if (mode == 0)
       return saved_fd;
    else if (mode == 1) {
-      close(old_fd);
+      close(new_fd);
       return -1;
    }
    else {
@@ -129,7 +130,8 @@ int main(void)
       print_queue(queue);
    }
 
-   redirect(0, new_fd, 1);
+   redirect(old_fd, STDOUT_FILENO, 1);
    close(new_fd);
+   printf("redirect sucess\n");
    exit(0);
 }
